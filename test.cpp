@@ -3,38 +3,102 @@
 //
 
 #include "test.h"
+#include <algorithm>
 
 void test_100K_vector() {
+    //create and fill vector
     unsigned int N = 1024 * 128;
     std::vector<int> V(N);
-
     for (int i = 0; i < N; i++) {
         V[i] = i;
     }
-    ABC::top(V);
+    ABC::top(V); //print top of vector
 
-
-    auto *decrease = new Decrease<int>();
+    //timer
     std::clock_t start;
     double duration;
 
+    //sort in decrease direction
+    auto *decrease = new Decrease<int>();
     start = std::clock();
-
     ABC::sort(V, 1, N, decrease);
-
     duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;
-    std::cout << "printf: " << duration << '\n';
-
+    std::cout << "\nTime of sorting  = " << duration << '\n';
     ABC::top(V);
 
+    //sort in increase direction
     auto *increase = new Increase<int>();
     start = std::clock();
     ABC::sort(V, 1, N, increase);
     duration = (std::clock() - start) / (double) CLOCKS_PER_SEC;
-    std::cout << "printf: " << duration << '\n';
+    std::cout << "\nTime of sorting  = " << duration << '\n';
     ABC::top(V);
 
     delete decrease;
+    delete increase;
+}
+
+void test_100K_array_with_internal_buffer() {
+    //create and fill vector
+    const unsigned int N = 1024 * 128;
+    std::array<int, N> V{};
+    for (int i = 0; i < N; i++) {
+        V[i] = i;
+    }
+    std::cout << "Created array with " << std::to_string(N) << " elements.\n";
+    //sort in decrease direction
+    auto decrease = [](std::array<int, N> &V) {
+        std::cout << "Sorting ..." << std::endl;
+        auto *decrease = new Decrease<int>();
+        ABC::sort(V, 1, N, decrease);
+        delete decrease;
+        ABC::top(V);
+    };
+
+    //sort in increase direction
+    auto increase = [](std::array<int, N> &V) {
+        std::cout << "Sorting ..." << std::endl;
+        auto *increase = new Increase<int>();
+        ABC::sort(V, 1, N, increase);
+        delete increase;
+        ABC::top(V);
+    };
+    test_function("Array: decrease sorting: ", decrease, V);
+    test_function("Array: increase sorting: ", increase, V);
+}
+
+void test_100K_array_with_external_buffer() {
+    //create and fill vector
+    const unsigned int N = 1024 * 128;
+    std::array<int, N> V{};
+    for (int i = 0; i < N; i++) {
+        V[i] = i;
+    }
+    std::cout << "Created vector with " << std::to_string(N) << " elements.\n";
+    //sort in decrease direction
+    auto decrease = [](std::array<int, N> &V) {
+        std::cout << "Sorting ..." << std::endl;
+        //external buffer
+        std::array<int, N> Buffer{};
+        auto *decrease = new Decrease<int>();
+        ABC::sort(V, Buffer, 1, N, decrease);
+        delete decrease;
+        ABC::top(V);
+    };
+
+    //sort in increase direction
+    auto increase = [](std::array<int, N> &V) {
+        std::cout << "Sorting ..." << std::endl;
+        //external buffer
+        std::array<int, N> Buffer{};
+        auto *increase = new Increase<int>();
+        ABC::sort(V, Buffer, 1, N, increase);
+        delete increase;
+        ABC::top(V);
+    };
+
+    test_function("Decrease sorting:", decrease, V);
+    test_function("Increase sorting:", increase, V);
 }
 
 
@@ -78,3 +142,7 @@ void test_vector() {
     delete decrease;
     delete increase;
 }
+
+
+
+

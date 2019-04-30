@@ -38,8 +38,8 @@ namespace ABC {
      * @tparam T
      * @param vector
      */
-    template<typename T>
-    void top(const std::vector<T> &vector, int number = 10);
+    template<class T>
+    void top(const T &vector, int number = 10);
 }
 
 #include "util_impl.h"

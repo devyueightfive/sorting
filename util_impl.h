@@ -39,8 +39,8 @@ namespace ABC {
         return result;
     }
 
-    template<typename T>
-    void top(const std::vector<T> &vector, int number) {
+    template<class T>
+    void top(const T &vector, int number) {
         int n = (number < vector.size()) ? number : vector.size();
         std::cout << "Top " << std::to_string(n) << " of " << std::to_string(vector.size()) << " : " << std::endl;
         for (int i = 0; i < n; i++) {

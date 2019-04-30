@@ -9,9 +9,6 @@
 #include <cstddef>
 #include <cmath>
 
-//#include "sort_inner.h"
-
-
 namespace ABC {
 
 /**
@@ -103,6 +100,45 @@ namespace ABC {
     void merge(std::array<T, size> &a, std::size_t p, std::size_t q, std::size_t r, Comparable<T> *comparator) {
         //internal buffer for sorting (start..begin)
         std::array<T, size> buffer{};
+        //edges of merging
+        std::size_t left_begin, left_end, right_begin, right_end;
+        left_begin = p - 1;
+        left_end = q - 1;
+        right_begin = left_end + 1;
+        right_end = r - 1;
+        int i = left_begin, j = right_begin, k = 0;
+        //merge two pieces to buffer
+        while (k < (right_end - left_begin + 1)) {
+            //merging by sorting
+            if (i <= left_end and j <= right_end) {
+                //sorting by comparator
+                buffer[k] = comparator->compare(a[i], a[j]) ? a[i++] : a[j++];
+            } else if (i > left_end) { buffer[k] = a[j++]; } else if (j > right_end) { buffer[k] = a[i++]; }
+            ++k;
+        }
+        //copy merged and sorted values back to the given array (begin..end)
+        for (i = left_begin, k = 0; k < (right_end - left_begin + 1); ++i, ++k) {
+            a[i] = buffer[k];
+        }
+    }
+
+
+    /**
+    *  Merges two sorted pieces ([start..middle] and [middle+1..end]) to one sorted piece of array.
+    *  Uses external buffer.
+    *  Sorting is performed by comparator.compare() function.
+    *
+    * @tparam size
+    * @tparam T - type
+    * @param a - array to sort
+    * @param p - start
+    * @param q - middle
+    * @param r - end
+    * @param comparator - compare elements of the array
+    */
+    template<std::size_t size, typename T>
+    void merge(std::array<T, size> &a, std::array<T, size> &buffer, std::size_t p, std::size_t q, std::size_t r,
+               Comparable<T> *comparator) {
         //edges of merging
         std::size_t left_begin, left_end, right_begin, right_end;
         left_begin = p - 1;

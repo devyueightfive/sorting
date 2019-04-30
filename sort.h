@@ -115,7 +115,28 @@ namespace ABC {
             merge(a, p, q, r, comparator);
         }
     }
-}
 
+
+/**
+ * Sort array<T> in increase direction.
+ * uses external buffer.
+ *
+ * @tparam size - size of array
+ * @tparam T - typename
+ * @param a - array<T>.
+ * @param p  - start position of sorting. [1..length(a)].
+ * @param r - end position of sorting. [1..length(a)].
+ */
+    template<std::size_t size, typename T>
+    void
+    sort(std::array<T, size> &a, std::array<T, size> &buffer, std::size_t p, std::size_t r, Comparable<T> *comparator) {
+        if (p < r) {
+            int q = (int) trunc((p + r) / 2.0);
+            sort(a, buffer, p, q, comparator);
+            sort(a, buffer, q + 1, r, comparator);
+            merge(a, buffer, p, q, r, comparator);
+        }
+    }
+}
 
 #endif //UNTITLED_SORT_H
